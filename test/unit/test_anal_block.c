@@ -81,7 +81,7 @@ bool test_r_anal_block_create(void) {
 	RAnal *anal = r_anal_new ();
 	assert_invariants (anal);
 
-	RAnalBlock *block = r_anal_block_create (anal, 0x1337, 42);
+	RAnalBlock *block = r_anal_create_block (anal, 0x1337, 42);
 	assert_invariants (anal);
 	mu_assert ("created block", block);
 	mu_assert_eq (block->addr, 0x1337, "created addr");
