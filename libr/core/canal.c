@@ -2451,26 +2451,26 @@ static int fcn_print_verbose(RCore *core, RAnalFunction *fcn, bool use_color) {
 	}
 
 	r_cons_printf (FCN_LIST_VERBOSE_ENTRY, color,
-				   addrwidth, fcn->addr,
-				   r_anal_function_realsize (fcn),
-				   r_list_length (fcn->bbs),
-				   r_anal_fcn_count_edges (fcn, &ebbs),
-				   r_anal_fcn_cc (core->anal, fcn),
-				   r_anal_fcn_cost (core->anal, fcn),
-				   addrwidth, r_anal_function_min_addr (fcn),
-				   r_anal_function_linear_size (fcn),
-				   addrwidth, r_anal_function_max_addr (fcn),
-				   fcn->meta.numcallrefs,
+			addrwidth, fcn->addr,
+			r_anal_function_realsize (fcn),
+			r_list_length (fcn->bbs),
+			r_anal_fcn_count_edges (fcn, &ebbs),
+			r_anal_fcn_cc (core->anal, fcn),
+			r_anal_fcn_cost (core->anal, fcn),
+			addrwidth, r_anal_function_min_addr (fcn),
+			r_anal_function_linear_size (fcn),
+			addrwidth, r_anal_function_max_addr (fcn),
+			fcn->meta.numcallrefs,
 			r_anal_var_count (core->anal, fcn, 's', 0) +
 			r_anal_var_count (core->anal, fcn, 'b', 0) +
 			r_anal_var_count (core->anal, fcn, 'r', 0),
 			r_anal_var_count (core->anal, fcn, 's', 1) +
 			r_anal_var_count (core->anal, fcn, 'b', 1) +
 			r_anal_var_count (core->anal, fcn, 'r', 1),
-				   fcn->meta.numrefs,
-				   fcn->maxstack,
-				   name,
-				   color_end);
+			fcn->meta.numrefs,
+			fcn->maxstack,
+			name,
+			color_end);
 	free (name);
 	return 0;
 }
@@ -2884,7 +2884,7 @@ static int fcn_print_legacy(RCore *core, RAnalFunction *fcn) {
 	char *name = r_core_anal_fcn_name (core, fcn);
 
 	r_cons_printf ("#\noffset: 0x%08"PFMT64x"\nname: %s\nsize: %"PFMT64u,
-				   fcn->addr, name, r_anal_function_linear_size (fcn));
+			fcn->addr, name, r_anal_function_linear_size (fcn));
 	r_cons_printf ("\nis-pure: %s", r_str_bool (r_anal_fcn_get_purity (core->anal, fcn)));
 	r_cons_printf ("\nrealsz: %d", r_anal_function_realsize (fcn));
 	r_cons_printf ("\nstackframe: %d", fcn->maxstack);
@@ -3060,9 +3060,6 @@ R_API int r_core_anal_fcn_list(RCore *core, const char *input, const char *rad) 
 		addr = r_num_math (core->num, name);
 	}
 
-#if NEWBBAPI
-	RList *fcns = r_anal_get_functions (core->anal, addr);
-#else
 	RList *fcns = r_list_newf (NULL);
 	if (!fcns) {
 		return -1;
@@ -3074,7 +3071,7 @@ R_API int r_core_anal_fcn_list(RCore *core, const char *input, const char *rad) 
 			r_list_append (fcns, fcn);
 		}
 	}
-#endif
+
 	// r_list_sort (fcns, &cmpfcn);
 	if (!rad) {
 		fcn_list_default (core, fcns, false);
@@ -4375,7 +4372,6 @@ R_API void r_core_anal_fcn_merge(RCore *core, ut64 addr, ut64 addr2) {
 	}
 	// TODO: import data/code/refs
 	r_anal_function_delete (f2);
-	// update size
 	r_anal_function_relocate (f2, R_MIN (addr, addr2));
 }
 

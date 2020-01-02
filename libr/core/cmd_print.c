@@ -3917,11 +3917,6 @@ static void _pointer_table(RCore *core, ut64 origin, ut64 offset, const ut8 *buf
 	}
 }
 
-// TODO: this function is a temporary fix. All analysis should be based on realsize. However, now for same architectures realisze is not used
-static ut32 tmp_get_contsize(RAnalFunction *f) {
-	return r_anal_function_linear_size (f);
-}
-
 static void __printPattern(RCore *core, const char *_input) {
 	char *input = strdup (_input);
 	const char *arg = r_str_nextword (input, ' ');
@@ -5281,7 +5276,7 @@ static int cmd_print(void *data, const char *input) {
 				R_ANAL_FCN_TYPE_FCN | R_ANAL_FCN_TYPE_SYM);
 			if (f) {
 				r_core_print_disasm_instructions (core,
-												  r_anal_function_linear_size ((RAnalFunction *) f), 0);
+					r_anal_function_linear_size ((RAnalFunction *) f), 0);
 				break;
 			}
 		}
@@ -5699,7 +5694,7 @@ static int cmd_print(void *data, const char *input) {
 						if (tmp_func->addr > f->addr) {
 							break;
 						}
-						cont_size = tmp_get_contsize (tmp_func);
+						cont_size = r_anal_function_linear_size (tmp_func);
 						loc_buf = calloc (cont_size, 1);
 						r_io_read_at (core->io, tmp_func->addr, loc_buf, cont_size);
 						r_core_print_disasm_json (core, tmp_func->addr, loc_buf, cont_size, 0, pj);
@@ -5718,7 +5713,7 @@ static int cmd_print(void *data, const char *input) {
 						}
 					}
 					for (; locs_it && (tmp_func = locs_it->data); locs_it = locs_it->n) {
-						cont_size = tmp_get_contsize (tmp_func);
+						cont_size = r_anal_function_linear_size (tmp_func);
 						loc_buf = calloc (cont_size, 1);
 						if (loc_buf) {
 							r_io_read_at (core->io, tmp_func->addr, loc_buf, cont_size);
@@ -5738,10 +5733,10 @@ static int cmd_print(void *data, const char *input) {
 						if (tmp_func->addr > f->addr) {
 							break;
 						}
-						cont_size = tmp_get_contsize (tmp_func);
+						cont_size = r_anal_function_linear_size (tmp_func);
 						r_core_cmdf (core, "pD %d @ 0x%08" PFMT64x, cont_size, tmp_func->addr);
 					}
-					cont_size = tmp_get_contsize (f);
+					cont_size = r_anal_function_linear_size (f);
 #endif
 					ut64 linearsz = r_anal_function_linear_size (f);
 					ut64 realsz = r_anal_function_realsize (f);
@@ -5758,7 +5753,7 @@ static int cmd_print(void *data, const char *input) {
 					}
 #if 0
 					for (; locs_it && (tmp_func = locs_it->data); locs_it = locs_it->n) {
-						cont_size = tmp_get_contsize (tmp_func);
+						cont_size = r_anal_function_linear_size (tmp_func);
 						r_core_cmdf (core, "pD %d @ 0x%08" PFMT64x, cont_size, tmp_func->addr);
 					}
 #endif
